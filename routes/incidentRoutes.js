@@ -19,7 +19,17 @@ router.get('/', isLoggedIn, (req, res) => {
         if(err){
             res.status(500).json(err)
         }else{
-            const filteredIncidents = allIncidents.filter(i => i.status !== "DELETED")
+            let status = req.query.status;
+            status = INCIDENT_STATUS_MAPPER[status]
+            const filteredIncidents = allIncidents
+                .filter(i => i.status !== "DELETED")
+                .filter(i => {
+                    if (status) {
+                        return i.status == status
+                    } else {
+                        return true;
+                    }
+                })
             res.status(200).json(filteredIncidents)
         }
     })
@@ -32,7 +42,7 @@ router.post('/', isLoggedIn, (req, res) => {
         incident.title = req.body.title,
         incident.description = req.body.description,
             // TODO: Refactor string to enum
-        incident.status = "ACTIVE",
+            incident.status = "NEW",
         incident.createdOn = Date.now(),
         incident.modifiedOn = Date.now(),
         incident.creator = req.body.creator
@@ -47,6 +57,30 @@ router.post('/', isLoggedIn, (req, res) => {
         })
 })
 
+//POST: for adding narratives//
+router.post('/narrative', isLoggedIn, (req, res) => {
+    Incident.findOne({_id: req.body.id}, (err, incident) => {
+        if(err){
+            res.status(500).json(err)
+        } else {
+            if (!checkIfModificationAllowed(incident)) {
+                res.status(400).json({msg: "The incident has been deleted or closed. So further modifications are forbidden."})
+            } else {
+                let narrative = incident.narrative;
+                const {userID} = req.userData;
+                narrative = [...narrative,{note: req.body.note, timestamp: new Date(), user: userID}]
+                incident.narrative = narrative;
+                incident.save((err, updatedIncident) => {
+                    if(err){
+                        res.status(500).json(err)
+                    }else{
+                        res.status(200).json({msg: "Updated info successfully", updatedIncident})
+                    }
+                })}
+            }
+    })
+})
+
 //Read route (:id) - to get incident details by ID//
 router.get('/:id', isLoggedIn, (req, res) => {
     Incident.findOne({_id: req.params.id}, (err, foundIncident) => {
@@ -59,11 +93,12 @@ router.get('/:id', isLoggedIn, (req, res) => {
 })
 
 //Edit route - to edit given incident//
-router.put('/:id', (req, res) => {
+router.put('/:id', isLoggedIn, (req, res) => {
     Incident.findById(req.params.id, (err, incident) => {
         if(err){
             res.status(500).json(err)
         }else{
+            responseOutErrorForNotAllowedModifications(res,incident);
             //to save modified data//
             incident.title = req.body.title,
             incident.description = req.body.description,
@@ -81,11 +116,12 @@ router.put('/:id', (req, res) => {
 })
 
 //Delete route - to delete incident// (just incase, however it's much better to "close" and incident instead of delete//
-router.delete('/:id', (req, res) => {
+router.delete('/:id', isLoggedIn, (req, res) => {
     Incident.findById(req.params.id, (err, incident) => {
         if(err){
             res.status(500).json(err)
         }else{
+            responseOutErrorForNotAllowedModifications(res,incident);
             //to save modified data//
             incident.status = "DELETED",
             incident.save((err, updatedIncident) => {
