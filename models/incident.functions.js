@@ -12,7 +12,8 @@ const INCIDENT_STATUSES = {
   CANCELLED
 };
 
-function verifyStatus(status) {
+function verifyStatus(st) {
+    let status = st.toUpperCase();
     // Returns the status after verifying it's one of the liable states
     if (status == ACTIVE || status == DELETED || status == RESOLVED || status == CANCELLED) {
         return status

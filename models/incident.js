@@ -9,7 +9,9 @@ const incidentSchema = new Schema({
     status: {type: String, required: true},
     createdOn: {type: Date, required: false},
     modifiedOn: {type: Date, required: false, default: null},
-    creator: {type: ObjectId, ref: 'User'}
+    priority: {type: Number, required: false, default: 1},
+    creator: {type: ObjectId, ref: 'User'},
+    narrative: {type: Array, default: null}
 })
 
 module.exports = mongoose.model('Incident', incidentSchema)

@@ -8,8 +8,9 @@ const userSchema = new Schema({
     email: {type: String, required: true},
     password: {type: String, required: true},
     joinedOn: {type: Date, required: true},
-    accountType: {type: String, required: true},
-    accountStatus: {type: String, required: true}
+    accountType: {type: String, required: true, default: "STANDARD_USER"}, // ONE of STANDARD_USER, ADMIN
+    accountStatus: {type: String, required: true}, // ONE of ACTIVE, DELETED, TERMINATED
+    lastLoggedIn: {type: Date, required: true}
 });
 
 module.exports = mongoose.model('User', userSchema)
