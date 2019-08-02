@@ -5,9 +5,11 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const keys = require('./config/keys')
 const bodyParser = require('body-parser')
+const http = require('http')
 
 //app config//
 var app = express();
+app.server = http.createServer(app);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors())
