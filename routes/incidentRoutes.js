@@ -1,9 +1,17 @@
-const INCIDENT_STATUSES = require("../models/incident.functions");
 const express = require('express')
 const Incident = require('../models/incident')
 const IncidentFunctions = require("../models/incident.functions")
 const isLoggedIn = require('../middlewares/isLoggedIn')
 const router = express.Router()
+
+const INCIDENT_STATUS_MAPPER = {
+    All: undefined,
+    Open: "ACTIVE",
+    Closed: "CLOSED",
+    Resolved: "RESOLVED",
+    Cancelled: "CANCELLED",
+    New: "NEW"
+};
 
 //Read Route - to get all incident//
 router.get('/', isLoggedIn, (req, res) => {
