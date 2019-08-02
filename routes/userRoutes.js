@@ -3,6 +3,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const keys = require('../config/keys')
+const isLoggedIn = require('../middlewares/isLoggedIn')
 
 const router = express.Router()
 
@@ -10,7 +11,7 @@ const router = express.Router()
 router.post('/register', (req, res) => {
     const { firstName, lastName, email, password, accountType} = req.body
     //look if user email already exists//
-    User.findOne(req.body.email, (err, user) => {
+    User.findOne({email: req.body.email}, (err, user) => {
         //if user already exists, send msg//
         if(user) {
             res.json({msg: "User already exists!!!"})
@@ -25,10 +26,13 @@ router.post('/register', (req, res) => {
             let user = new User({
                 firstName,
                 lastName,
-                email,
+                email: email.toLowerCase(),
                 password,
                 accountType,
-                joinedOn: Date.now()
+                joinedOn: Date.now(),
+                accountStatus: "ACTIVE",
+                accountType: accountType,
+                lastLoggedIn: Date.now()
             })
 
             //hashing the password//
@@ -56,27 +60,38 @@ router.post('/login', (req, res) => {
             res.status(500).json({msg: "User not found"})
         }else{
             //compare entered password with stores hash//
-            bcrypt.compare(req.body.password, user.password, (err, result) => {
-                //if not similar to hash, throw error//
-                if(err){
-                    res.status(401).json({msg: "Authentication failed: Incorrect password"}) 
-                }
-                //if given password is similar to hash, generate token show success//
-                if(result){
-                    const auth_token = jwt.sign({
-                            email: user.email,
-                            userID: user.id
-                        }, keys.JWT_KEY,
-                        {
-                            expiresIn: '5h'
-                        }
-                    )
-                    res.status(200).json({
-                        msg: "Authentication successful",
-                        token: auth_token
-                    })
-                }
-            })
+            try {
+                bcrypt.compare(req.body.password, user.password, (err, result) => {
+                    //if not similar to hash, throw error//
+                    if(err){
+                        res.status(401).json({msg: "Authentication failed: Incorrect password"})
+                    }
+                    //if given password is similar to hash, generate token show success//
+                    if(result){
+                        const auth_token = jwt.sign({
+                                email: user.email,
+                                userID: user.id
+                            }, keys.JWT_KEY,
+                            {
+                                expiresIn: '5h'
+                            }
+                        )
+                        user.lastLoggedIn = Date.now();
+                        user.save();
+                        res.status(200).json({
+                            msg: "Authentication successful",
+                            token: auth_token,
+                            profile_id: user.id
+                        })
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e);
+                res.status(400).json({
+                   message: "Email and/or password are incorrect"
+                });
+            }
 
         }
     })
@@ -121,6 +136,19 @@ router.put('/:id', (req, res) => {
                     res.status(200).json(updatedUser)
                 }
             })
+        }
+    })
+})
+
+//Profile route //
+router.get('/me', isLoggedIn , (req, res) => {
+    const id = req.userData.userID
+    User.findOne({_id: id}, (err, foundUser) => {
+        if(err){
+            res.status(500).json(err)
+        }else{
+            const userDto = Object.assign(foundUser, {password: undefined})
+            res.status(200).json(foundUser)
         }
     })
 })
