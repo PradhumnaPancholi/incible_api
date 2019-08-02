@@ -135,4 +135,15 @@ router.delete('/:id', isLoggedIn, (req, res) => {
     })
 })
 
+//for checking if modififcations are allowed//
+function checkIfModificationAllowed(incident) {
+    return incident.status !== "CLOSED" || incident.status !== "DELETED" || incident.status !== "RESOLVED";
+}
+
+function responseOutErrorForNotAllowedModifications(res,incident) {
+    if (!checkIfModificationAllowed(incident)) {
+        res.status(400).json({msg: "The incident has been deleted or closed. So further modifications are forbidden."})
+    }
+}
+
 module.exports = router
