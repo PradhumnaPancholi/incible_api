@@ -1,5 +1,5 @@
 var express = require('express');
-var router = require('./routes/routes.js')
+var router = require('./routes/routes');
 var path = require('path');
 const cors = require('cors')
 const mongoose = require('mongoose')
