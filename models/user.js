@@ -1,15 +1,15 @@
-const mongoose = require('mongoose')
+ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
-const ObjectId = Schema.Types.ObjectId
 
-const incidentSchema = new Schema({
-    title: {type: String, required: true},
-    description: {type: String, required: true},
-    status: {type: String, required: true},
-    createdOn: {type: Date, required: false},
-    modifiedOn: {type: Date, required: false, default: null},
-    creator: {type: ObjectId, ref: 'User'}
-})
+const userSchema = new Schema({
+    firstName: {type: String, required: true},
+    lastName: {type: String, require: true},
+    email: {type: String, required: true},
+    password: {type: String, required: true},
+    joinedOn: {type: Date, required: true},
+    accountType: {type: String, required: true},
+    accountStatus: {type: String, required: true}
+});
 
-module.exports = mongoose.model('Incident', incidentSchema)
+module.exports = mongoose.model('User', userSchema)

@@ -11,6 +11,7 @@ var app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors())
+app.use('/', router);
 
 
 //db connection//
@@ -23,9 +24,9 @@ db.once('open', () => {
     console.log("Connected to the Databse")
 })
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../client'));
-app.use(express.static(path.join(__dirname, '../client')));
-app.use('/', router);
+app.listen(8000, () => {
+    console.log(`Server runnning`)
+})
+
 
 module.exports=app;
