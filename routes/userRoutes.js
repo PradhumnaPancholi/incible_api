@@ -8,7 +8,7 @@ const router = express.Router()
 
 //to register user//
 router.post('/register', (req, res) => {
-    const { firstName, lastName, email, password} = req.body
+    const { firstName, lastName, email, password, accountType} = req.body
     //look if user email already exists//
     User.findOne(req.body.email, (err, user) => {
         //if user already exists, send msg//
@@ -27,6 +27,7 @@ router.post('/register', (req, res) => {
                 lastName,
                 email,
                 password,
+                accountType,
                 joinedOn: Date.now()
             })
 

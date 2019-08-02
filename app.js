@@ -24,7 +24,7 @@ db.once('open', () => {
     console.log("Connected to the Databse")
 })
 
-app.listen(8000, () => {
+app.listen(process.env.PORT, process.env.IP , () => {
     console.log(`Server runnning`)
 })
 
