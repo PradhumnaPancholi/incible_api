@@ -3,6 +3,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const keys = require('../config/keys')
+const isLoggedIn = require('../middlewares/isLoggedIn')
 
 const router = express.Router()
 
