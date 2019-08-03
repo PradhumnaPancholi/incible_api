@@ -94,7 +94,7 @@ router.get('/', (req, res) => {
 })
 
 //Details route - to get user by ID//
-router.get('/:id', (req, res) => {
+/*router.get('/:id', (req, res) => {
     User.findOne({_id: req.params.id}, (err, foundUser) => {
         if(err){
             res.status(500).json(err)
@@ -102,7 +102,7 @@ router.get('/:id', (req, res) => {
             res.status(200).json(foundUser)
         }
     })
-})
+})*/
 
 //Edit route - to edit existing user information//
 router.put('/:id', (req, res) => {
