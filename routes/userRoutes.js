@@ -104,6 +104,19 @@ router.get('/', (req, res) => {
     })
 })*/
 
+//Profile route //
+router.get('/me', isLoggedIn , (req, res) => {
+    const id = req.userData.userID
+    User.findOne({_id: id}, (err, foundUser) => {
+        if(err){
+            res.status(500).json(err)
+        }else{
+            const userDto = Object.assign(foundUser, {password: undefined})
+            res.status(200).json(foundUser)
+        }
+    })
+})
+
 //Edit route - to edit existing user information//
 router.put('/:id', (req, res) => {
     User.findById(req.params.id, (err, user) => {
