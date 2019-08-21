@@ -1,6 +1,6 @@
 const express = require('express')
 const User = require('../models/user')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const keys = require('../config/keys')
 const isLoggedIn = require('../middlewares/isLoggedIn')
@@ -54,7 +54,9 @@ router.post('/login', (req, res) => {
     User.findOne({email: req.body.email}, (err, user) => {
         //throw error if user not found//
         if(err){
-            res.status(500).json({msg: "User not found"})
+            res.status(500).json({msg: err})
+        }else if(!user) {
+            res.status(200).json({msg: "User nor found"})
         }else{
             //compare entered password with stores hash//
             bcrypt.compare(req.body.password, user.password, (err, result) => {
