@@ -11,10 +11,10 @@ const router = express.Router()
 router.post('/register', (req, res) => {
     const { firstName, lastName, email, password, accountType} = req.body
     //look if user email already exists//
-    User.findOne(req.body.email, (err, user) => {
+    User.findOne({email: req.body.email}, (err, user) => {
         //if user already exists, send msg//
         if(user) {
-            res.json({msg: "User already exists!!!"})
+            res.status(500).json({msg: "User already exists!!!"})
             return
         }
         //password validations//
