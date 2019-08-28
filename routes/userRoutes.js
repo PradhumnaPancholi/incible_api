@@ -20,7 +20,7 @@ router.post('/register', (req, res) => {
         //password validations//
         if(password === ""){
             //password can't be empty//
-            res.json({msg:"Password can't be empty"})
+            res.status(500).json({msg:"Password can't be empty"})
         }else{
             //create new user object//
             let user = new User({
@@ -41,7 +41,7 @@ router.post('/register', (req, res) => {
                     //store hashed password//
                     user.password = hashedPassword
                     user.save()
-                    res.json(user)
+                    res.status(200).json(user)
                 }
             })
         }
