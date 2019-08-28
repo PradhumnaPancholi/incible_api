@@ -29,7 +29,8 @@ router.post('/register', (req, res) => {
                 email,
                 password,
                 accountType,
-                joinedOn: Date.now()
+                joinedOn: Date.now(),
+                accountStatus: "Active" //Always default value//
             })
 
             //hashing the password//
@@ -56,7 +57,7 @@ router.post('/login', (req, res) => {
         if(err){
             res.status(500).json({msg: err})
         }else if(!user) {
-            res.status(200).json({msg: "User nor found"})
+            res.status(200).json({msg: "User nor found  "})
         }else{
             //compare entered password with stores hash//
             bcrypt.compare(req.body.password, user.password, (err, result) => {
