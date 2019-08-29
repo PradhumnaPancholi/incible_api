@@ -116,7 +116,8 @@ router.get("/me", isLoggedIn, (req, res) => {
     if (error) {
       res.status(500).json(error);
     } else {
-      // const userDto = Object.assign(foundUser, { password: undefined });
+      // eslint-disable-next-line no-unused-vars
+      const userDto = Object.assign(foundUser, { password: undefined });
       res.status(200).json(foundUser);
     }
   });
