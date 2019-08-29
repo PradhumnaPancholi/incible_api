@@ -1,104 +1,105 @@
-const express = require('express')
-const User = require('../models/user')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const keys = require('../config/keys')
-const isLoggedIn = require('../middlewares/isLoggedIn')
+/* eslint-disable no-param-reassign */
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const keys = require("../config/keys");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
-const router = express.Router()
+const router = express.Router();
 
-//to register user//
-router.post('/register', (req, res) => {
-    const { firstName, lastName, email, password, accountType} = req.body
-    //look if user email already exists//
-    User.findOne({email: req.body.email}, (err, user) => {
-        //if user already exists, send msg//
-        if(user) {
-            res.status(500).json({msg: "User already exists!!!"})
-            return
+// to register user//
+router.post("/register", (req, res) => {
+  const {
+    firstName, lastName, email, password, accountType,
+  } = req.body;
+  // look if user email already exists//
+  User.findOne({ email: req.body.email }, (error, user) => {
+    // if user already exists, send msg//
+    if (user) {
+      res.status(500).json({ msg: "User already exists!!!" });
+      return;
+    }
+    // password validations//
+    if (password === "") {
+      // password can't be empty//
+      res.status(500).json({ msg: "Password can't be empty" });
+    } else {
+      // create new user object//
+      const newUser = new User({
+        firstName,
+        lastName,
+        email,
+        password,
+        accountType,
+        joinedOn: Date.now(),
+        accountStatus: "Active", // Always default value//
+      });
+
+      // hashing the password//
+      // eslint-disable-next-line no-shadow
+      bcrypt.hash(newUser.password, 10, (error, hashedPassword) => {
+        if (error) {
+          res.status(500).json({ msg: error });
+        } else {
+          // store hashed password//
+          newUser.password = hashedPassword;
+          newUser.save();
+          res.status(200).json(newUser);
         }
-        //password validations//
-        if(password === ""){
-            //password can't be empty//
-            res.status(500).json({msg:"Password can't be empty"})
-        }else{
-            //create new user object//
-            let user = new User({
-                firstName,
-                lastName,
-                email,
-                password,
-                accountType,
-                joinedOn: Date.now(),
-                accountStatus: "Active" //Always default value//
-            })
+      });
+    }
+  });
+});
 
-            //hashing the password//
-            bcrypt.hash(user.password, 10, (err, hashedPassword) => {
-                if(err){
-                    res.status(500).json({msg: err})
-                }else{
-                    //store hashed password//
-                    user.password = hashedPassword
-                    user.save()
-                    res.status(200).json(user)
-                }
-            })
+// to login user//
+router.post("/login", (req, res) => {
+  // to find user by email//
+  User.findOne({ email: req.body.email }, (err, user) => {
+    // throw error if user not found//
+    if (err) {
+      res.status(500).json({ msg: err });
+    } else if (!user) {
+      res.status(200).json({ msg: "User nor found  " });
+    } else {
+      // compare entered password with stores hash//
+      bcrypt.compare(req.body.password, user.password, (error, result) => {
+        // if not similar to hash, throw error//
+        if (error) {
+          res.status(401).json({ msg: "Authentication failed: Incorrect password" });
         }
-
-
-    })
-})
-//to login user//
-router.post('/login', (req, res) => {
-    //to find user by email//
-    User.findOne({email: req.body.email}, (err, user) => {
-        //throw error if user not found//
-        if(err){
-            res.status(500).json({msg: err})
-        }else if(!user) {
-            res.status(200).json({msg: "User nor found  "})
-        }else{
-            //compare entered password with stores hash//
-            bcrypt.compare(req.body.password, user.password, (err, result) => {
-                //if not similar to hash, throw error//
-                if(err){
-                    res.status(401).json({msg: "Authentication failed: Incorrect password"}) 
-                }
-                //if given password is similar to hash, generate token show success//
-                if(result){
-                    const auth_token = jwt.sign({
-                            email: user.email,
-                            userID: user.id
-                        }, keys.JWT_KEY,
-                        {
-                            expiresIn: '5h'
-                        }
-                    )
-                    res.status(200).json({
-                        msg: "Authentication successful",
-                        token: auth_token
-                    })
-                }
-            })
-
+        // if given password is similar to hash, generate token show success//
+        if (result) {
+          const authToken = jwt.sign({
+            email: user.email,
+            userID: user.id,
+          }, keys.JWT_KEY,
+          {
+            expiresIn: "5h",
+          });
+          res.status(200).json({
+            msg: "Authentication successful",
+            token: authToken,
+          });
         }
-    })
-})
+      });
+    }
+  });
+});
 
-//Read route - to get all users//
-router.get('/', (req, res) => {
-    User.find({}, (err, allUsers) => {
-        if(err){
-            res.status(500).json(err)
-        }else{
-            res.status(200).json(allUsers)
-        }
-    })
-})
+// Read route - to get all users//
+router.get("/", (req, res) => {
+  User.find({}, (err, allUsers) => {
+    if (err) {
+      res.status(500).json(err);
+    } else {
+      res.status(200).json(allUsers);
+    }
+  });
+});
 
-//Details route - to get user by ID//
-/*router.get('/:id', (req, res) => {
+// Details route - to get user by ID//
+/* router.get('/:id', (req, res) => {
     User.findOne({_id: req.params.id}, (err, foundUser) => {
         if(err){
             res.status(500).json(err)
@@ -106,51 +107,51 @@ router.get('/', (req, res) => {
             res.status(200).json(foundUser)
         }
     })
-})*/
+}) */
 
-//Profile route //
-router.get('/me', isLoggedIn , (req, res) => {
-    const id = req.userData.userID
-    User.findOne({_id: id}, (err, foundUser) => {
-        if(err){
-            res.status(500).json(err)
-        }else{
-            const userDto = Object.assign(foundUser, {password: undefined})
-            res.status(200).json(foundUser)
+// Profile route //
+router.get("/me", isLoggedIn, (req, res) => {
+  const id = req.userData.userID;
+  User.findOne({ _id: id }, (error, foundUser) => {
+    if (error) {
+      res.status(500).json(error);
+    } else {
+      // const userDto = Object.assign(foundUser, { password: undefined });
+      res.status(200).json(foundUser);
+    }
+  });
+});
+
+// Edit route - to edit existing user information//
+router.put("/:id", (req, res) => {
+  User.findById(req.params.id, (err, foundUser) => {
+    if (err) {
+      res.status(500).json(err);
+    } else {
+      // currently this route just allows user to edit their first and last name//
+      foundUser.firstName = req.body.firstName;
+      foundUser.lastName = req.body.lastName;
+
+      foundUser.save((error, updatedUser) => {
+        if (error) {
+          res.status(500).json(error);
+        } else {
+          res.status(200).json(updatedUser);
         }
-    })
-})
+      });
+    }
+  });
+});
 
-//Edit route - to edit existing user information//
-router.put('/:id', (req, res) => {
-    User.findById(req.params.id, (err, user) => {
-        if(err){
-            res.status(500).json(err)
-        }else{
-            //currently this route just allows user to edit their first and last name//
-            user.firstName = req.body.firstName,
-            user.lastName = req.body.lastName
+// Delete route - to delete a user//
+router.delete("/:id", (req, res) => {
+  User.deleteOne({ _id: req.params.id }, (err) => {
+    if (err) {
+      res.status(500).json(err);
+    } else {
+      res.status(200).json({ msg: "User deleted succesfully" });
+    }
+  });
+});
 
-            user.save((err, updatedUser) => {
-                if(err){
-                    res.status(500).json(err)
-                }else{
-                    res.status(200).json(updatedUser)
-                }
-            })
-        }
-    })
-})
-
-//Delete route - to delete a user//
-router.delete('/:id', (req, res) => {
-    User.deleteOne({_id: req.params.id}, (err) => {
-        if(err){
-            res.status(500).json(err)
-        }else{
-            res.status(200).json({msg: "User deleted succesfully"})
-        }
-    })
-})
-
-module.exports = router
+module.exports = router;

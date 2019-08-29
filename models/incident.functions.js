@@ -9,19 +9,18 @@ const INCIDENT_STATUSES = {
   ACTIVE,
   DELETED,
   RESOLVED,
-  CANCELLED
+  CANCELLED,
 };
 
 function verifyStatus(status) {
-    // Returns the status after verifying it's one of the liable states
-    if (status == ACTIVE || status == DELETED || status == RESOLVED || status == CANCELLED) {
-        return status
-    } else {
-        throw INVALID_STATUS_ERROR
-    }
+  // Returns the status after verifying it's one of the liable states
+  if (status === ACTIVE || status === DELETED || status === RESOLVED || status === CANCELLED) {
+    return status;
+  }
+  throw INVALID_STATUS_ERROR;
 }
 
 module.exports = {
-    verifyStatus: verifyStatus,
-    INCIDENT_STATUSES
+  verifyStatus,
+  INCIDENT_STATUSES,
 };
