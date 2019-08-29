@@ -60,7 +60,7 @@ router.post("/login", (req, res) => {
     if (err) {
       res.status(500).json({ msg: err });
     } else if (!user) {
-      res.status(200).json({ msg: "User nor found  " });
+      res.status(200).json({ msg: "User nor found" });
     } else {
       // compare entered password with stores hash//
       bcrypt.compare(req.body.password, user.password, (error, result) => {
@@ -99,15 +99,15 @@ router.get("/", (req, res) => {
 });
 
 // Details route - to get user by ID//
-/* router.get('/:id', (req, res) => {
-    User.findOne({_id: req.params.id}, (err, foundUser) => {
-        if(err){
-            res.status(500).json(err)
-        }else{
-            res.status(200).json(foundUser)
-        }
-    })
-}) */
+router.get("/:id", (req, res) => {
+  User.findOne({ _id: req.params.id }, (error, foundUser) => {
+    if (error) {
+      res.status(500).json(error);
+    } else {
+      res.status(200).json(foundUser);
+    }
+  });
+});
 
 // Profile route //
 router.get("/me", isLoggedIn, (req, res) => {
