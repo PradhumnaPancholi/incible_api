@@ -3,9 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const keys = require("./config/keys");
-const userRoutes = require("./routes/userRoutes");
-const incidentRoutes = require("./routes/incidentRoutes");
+const keys = require("./src/config/keys");
+const userRoutes = require("./src/routes/userRoutes");
+const incidentRoutes = require("./src/routes/incidentRoutes");
 
 // app config//
 const app = express();

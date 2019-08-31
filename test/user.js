@@ -6,7 +6,7 @@ const chaiHttp = require("chai-http");
 const should = chai.should();
 const server = require("../app");
 // eslint-disable-next-line no-unused-vars
-const User = require("../models/user");
+const User = require("../src/models/user");
 
 /* chai config */
 chai.use(chaiHttp);
