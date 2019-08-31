@@ -21,13 +21,14 @@ router.post("/register", (req, res) => {
       res.status(500).json({ msg: "User already exists!!!" });
     } else if (error) {
       res.status(500).json({ msg: error });
-    } else if (password === "") {
       // for passoword validation//
       // password can't be empty//
+    } else if (password === "") {
       res.status(500).json({ msg: "Password can't be empty" });
-    } else if (password.length < 8) {
       // password cannot be less than 8 characters//
+    } else if (password.length < 8) {
       res.status(500).json({ msg: "password must be atleast 8 characters" });
+      // for checking if user have special characters in password //
     } else if (checkSpecialCharacter(password) === false) {
       res.status(500).json({ msg: "password should have atleast one special character" });
     } else {
@@ -64,9 +65,9 @@ router.post("/login", (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
     // throw error if user not found//
     if (err) {
-      res.status(500).json({ msg: err });
+      res.status(409).json({ msg: err });
     } else if (!user) {
-      res.status(200).json({ msg: "User nor found" });
+      res.status(300).json({ msg: "User nor found" });
     } else {
       // compare entered password with stores hash//
       bcrypt.compare(req.body.password, user.password, (error, result) => {
@@ -97,7 +98,7 @@ router.post("/login", (req, res) => {
 router.get("/", (req, res) => {
   User.find({}, (err, allUsers) => {
     if (err) {
-      res.status(500).json(err);
+      res.status(409).json(err);
     } else {
       res.status(200).json(allUsers);
     }
@@ -108,7 +109,7 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   User.findOne({ _id: req.params.id }, (error, foundUser) => {
     if (error) {
-      res.status(500).json(error);
+      res.status(409).json(error);
     } else {
       res.status(200).json(foundUser);
     }
@@ -120,7 +121,7 @@ router.get("/me", isLoggedIn, (req, res) => {
   const id = req.userData.userID;
   User.findOne({ _id: id }, (error, foundUser) => {
     if (error) {
-      res.status(500).json(error);
+      res.status(409).json(error);
     } else {
       // eslint-disable-next-line no-unused-vars
       const userDto = Object.assign(foundUser, { password: undefined });
@@ -133,7 +134,7 @@ router.get("/me", isLoggedIn, (req, res) => {
 router.put("/:id", (req, res) => {
   User.findById(req.params.id, (err, foundUser) => {
     if (err) {
-      res.status(500).json(err);
+      res.status(409).json(err);
     } else {
       // currently this route just allows user to edit their first and last name//
       foundUser.firstName = req.body.firstName;
@@ -141,7 +142,7 @@ router.put("/:id", (req, res) => {
 
       foundUser.save((error, updatedUser) => {
         if (error) {
-          res.status(500).json(error);
+          res.status(409).json(error);
         } else {
           res.status(200).json(updatedUser);
         }
@@ -154,7 +155,7 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   User.deleteOne({ _id: req.params.id }, (err) => {
     if (err) {
-      res.status(500).json(err);
+      res.status(409).json(err);
     } else {
       res.status(200).json({ msg: "User deleted succesfully" });
     }
