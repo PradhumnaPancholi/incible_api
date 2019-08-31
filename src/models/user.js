@@ -8,7 +8,7 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   joinedOn: { type: Date, required: true },
-  accountType: { type: String, required: true },
+  accountType: { type: String, default: "Standard User", required: true },
   accountStatus: { type: String, required: true },
 });
 
