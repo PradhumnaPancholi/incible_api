@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const keys = require("../config/keys");
 const isLoggedIn = require("../middlewares/isLoggedIn");
+const checkSpecialCharacter = require("../utils/helper.functions");
 
 const router = express.Router();
 
@@ -18,12 +19,17 @@ router.post("/register", (req, res) => {
     // if user already exists, send msg//
     if (user) {
       res.status(500).json({ msg: "User already exists!!!" });
-      return;
-    }
-    // password validations//
-    if (password === "") {
+    } else if (error) {
+      res.status(500).json({ msg: error });
+    } else if (password === "") {
+      // for passoword validation//
       // password can't be empty//
       res.status(500).json({ msg: "Password can't be empty" });
+    } else if (password.length < 8) {
+      // password cannot be less than 8 characters//
+      res.status(500).json({ msg: "password must be atleast 8 characters" });
+    } else if (checkSpecialCharacter(password) === false) {
+      res.status(500).json({ msg: "password should have atleast one special character" });
     } else {
       // create new user object//
       const newUser = new User({
