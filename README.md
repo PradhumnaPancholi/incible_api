@@ -24,4 +24,4 @@
 
 ## Docs
 
-    Documentation for this API is living [here](https://inciblebck.herokuapp.com/docs/)
+    Documentation for this API is living on https://inciblebck.herokuapp.com/docs/ 
