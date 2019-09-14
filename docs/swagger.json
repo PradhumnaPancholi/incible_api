@@ -1,0 +1,462 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "A simple and robust API for enterprise incident management at internal level",
+      "version": "1.0.0",
+      "title": "Incible_API",
+      "termsOfService": "http://swagger.io/terms/",
+      "contact": {
+        "email": "pnpancholi6629.pnp@gmail.com"
+      },
+      "license": {
+        "name": "MIT",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+    },
+    "host": "inciblebck.herokuapp.com",
+    "basePath": "/",
+    "schemes": [
+      "https",
+      "http"
+    ],
+    "paths": {
+      "/user/register": {
+        "post": {
+          "tags": [
+            "User"
+          ],
+          "summary": "To register a user",
+          "description": "",
+          "operationId": "RegisterUser",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "User object that needs to be added to the store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User succesfully added"
+            },
+            "500": {
+              "description": "User already exists / Password can't be empty / Password must be atleast 8 chararcters / password must have a special character"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        }
+      },
+      "/user/login": {
+        "post": {
+          "tags": [
+            "User"
+          ],
+          "summary": "To login a user",
+          "description": "",
+          "operationId": "LoginUser",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "User object that needs to be added to the store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Authentication succesfull"
+            },
+            "300": {
+              "description": "User not found"
+            },
+            "401": {
+              "description": "Incorrect password"
+            },
+            "409": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        }
+      },
+      "/user/{id}": {
+        "put": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Update an existing user",
+          "description": "",
+          "operationId": "UpdateUser",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of User",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated user succesfully"
+            },
+            "409": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        },
+        "get": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Get user details by id",
+          "description": "",
+          "operationId": "GetUser",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of User",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated user succesfully"
+            },
+            "409": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Deletes a user",
+          "description": "",
+          "operationId": "DeleteUser",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "USer deleted successfully"
+            },
+            "409": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        }
+      },
+      "/incidents/": {
+        "get": {
+          "tags": [
+            "Incident"
+          ],
+          "summary": "To get all incidents",
+          "description": "",
+          "operationId": "GetAllIncidents",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "User succesfully added"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "Incident"
+          ],
+          "summary": "To add a new incident",
+          "operationId": "CreateIncident",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "A Incident Object data that you want to create",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Incident"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User succesfully added"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        }
+      },
+      "/incidents/{id}": {
+        "put": {
+          "tags": [
+            "Incident"
+          ],
+          "summary": "To add a new incident",
+          "operationId": "EditIncident",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "Id for the incident that you want to edit",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated info succesfully"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Incident"
+          ],
+          "summary": "To get details of an incident",
+          "operationId": "GetIncident",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "Id for the incident that you want to details for",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated info succesfully"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Incident"
+          ],
+          "summary": "To delete a incident",
+          "operationId": "DeleteIncident",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "description": "Id for the incident that you want to delete",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Updated info succesfully"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        }
+      }
+    },
+    "securityDefinitions": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+        "flow": "implicit",
+        "scopes": {
+          "write:pets": "modify pets in your account",
+          "read:pets": "read your pets"
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Incident": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "modifiedOn": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "Incident"
+        }
+      }
+    }
+  }
+  

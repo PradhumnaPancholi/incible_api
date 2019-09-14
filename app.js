@@ -3,9 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const swaggerUi = require("swagger-ui-express");
 const keys = require("./src/config/keys");
 const userRoutes = require("./src/routes/userRoutes");
 const incidentRoutes = require("./src/routes/incidentRoutes");
+// for documentation//
+const swaggerDocs = require("./docs/swagger.json");
 
 // app config//
 const app = express();
@@ -40,5 +43,6 @@ app.get("/status", (req, response) => {
 
 app.use("/user/", userRoutes);
 app.use("/incident/", incidentRoutes);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 module.exports = app;
