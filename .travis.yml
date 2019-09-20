@@ -3,5 +3,5 @@ services:
   - docker
 
 script:
-  - docker build -t pradhumna/incible
+  - docker build -t pradhumna/incible .
   - docker images pradhumna/incible
